@@ -45,4 +45,13 @@ cd PodConfigMapController
 Ensure you have Go installed and your GOPATH is set up.
 ```bash
 go build -o podconfigmapcontroller main.go
+```
 
+### Run the Controller
+You can run the controller locally for development purposes or for testing.
+
+#### Running Locally with Kubeconfig
+```bash
+./podconfigmapcontroller --kubeconfig=/path/to/your/kubeconfig
+```
+P.S: Replace /path/to/your/kubeconfig with the path to your Kubernetes configuration file. If you're running this within a cluster or the default kubeconfig is sufficient, you can omit the --kubeconfig flag.
