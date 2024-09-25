@@ -102,3 +102,79 @@ Push Docker Image
 ```bash
 docker push yourdockerhubusername/podconfigmapcontroller:latest
 ```
+
+### Deploy to Kubernetes
+deployment.yaml (e.g.)
+```bash
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podconfigmapcontroller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: podconfigmapcontroller
+  template:
+    metadata:
+      labels:
+        app: podconfigmapcontroller
+    spec:
+      serviceAccountName: podconfigmapcontroller-sa
+      containers:
+        - name: podconfigmapcontroller
+          image: yourdockerhubusername/podconfigmapcontroller:latest
+          args:
+            - --kubeconfig=
+          ports:
+            - containerPort: 8080
+              name: metrics
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: podconfigmapcontroller-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: podconfigmapcontroller-role
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "configmaps"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "create", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: podconfigmapcontroller-rolebinding
+subjects:
+  - kind: ServiceAccount
+    name: podconfigmapcontroller-sa
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: podconfigmapcontroller-role
+  apiGroup: rbac.authorization.k8s.io
+```
+Apply the deployment:
+```bash
+kubectl apply -f deployment.yaml
+```
+Verify that pods are running:
+```bash
+kubectl get pods
+```
+
+### Usage
+Once the controller is running, it will automatically watch for Pod events and manage ConfigMaps accordingly. You can test this by creating and deleting Pods:
+```bash
+kubectl run test-pod --image=nginx
+```
+Check the logs of the controller to see if it has created a ConfigMap:
+```bash
+kubectl logs deployment/podconfigmapcontroller
+```
