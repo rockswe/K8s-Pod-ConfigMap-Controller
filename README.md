@@ -39,6 +39,7 @@ PodConfigMapController automates the management of ConfigMaps based on Pod metad
 ```bash
 git clone https://github.com/yourusername/PodConfigMapController.git
 cd PodConfigMapController
+```
 
 ### Build The Controller
 Ensure you have Go installed and your GOPATH is set up.
