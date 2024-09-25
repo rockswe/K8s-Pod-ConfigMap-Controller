@@ -55,3 +55,50 @@ You can run the controller locally for development purposes or for testing.
 ./podconfigmapcontroller --kubeconfig=/path/to/your/kubeconfig
 ```
 P.S: Replace /path/to/your/kubeconfig with the path to your Kubernetes configuration file. If you're running this within a cluster or the default kubeconfig is sufficient, you can omit the --kubeconfig flag.
+
+#### Running Inside the Cluster
+```bash
+./podconfigmapcontroller
+```
+When running inside the cluster, the controller can use the in-cluster configuration. Ensure that the ServiceAccount running the controller has the necessary permissions.
+
+### Containerize and Deploy to Kubernetes
+#### Build Docker Image
+Build Dockerfile first in your project dir
+```bash
+FROM golang:1.19 as builder
+
+WORKDIR /app
+
+# Copy the Go modules manifest
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy the source code
+COPY . .
+
+# Build the controller binary
+RUN go build -o podconfigmapcontroller main.go
+
+# Create a minimal image
+FROM alpine:latest
+
+# Set working directory
+WORKDIR /root/
+
+# Copy the binary from the builder stage
+COPY --from=builder /app/podconfigmapcontroller .
+
+# Command to run when starting the container
+CMD ["./podconfigmapcontroller"]
+```
+Build the Docker image:
+```bash
+docker build -t yourdockerhubusername/podconfigmapcontroller:latest .
+```
+Push Docker Image
+```bash
+docker push yourdockerhubusername/podconfigmapcontroller:latest
+```
