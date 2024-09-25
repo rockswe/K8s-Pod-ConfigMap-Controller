@@ -1,70 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
+# PodConfigMapController
 
-<h1>Kubernetes Custom Controller</h1>
-<p>
-    This is a Kubernetes controller written in Go that watches for Pod changes and creates ConfigMaps with their metadata.
-    The controller supports Pod events, a custom resource definition (CRD) for dynamic behavior, leader election, and Prometheus metrics.
-</p>
+A custom Kubernetes controller written in Go that watches for Pod events and automatically creates or deletes ConfigMaps containing their metadata. The controller supports:
 
-<h2>Features</h2>
-<ul>
-    <li>Handles Pod create, delete, and update events.</li>
-    <li>Custom Resource Definition (CRD) to control behavior.</li>
-    <li>Leader Election for high availability.</li>
-    <li>Prometheus metrics for monitoring.</li>
-</ul>
+- **Pod Events**: Handles create, update, and delete events for Pods.
+- **ConfigMap Management**: Creates and deletes ConfigMaps corresponding to Pods.
+- **Custom Resource Definition (CRD)**: Integrates a CRD for dynamic behavior customization.
+- **Leader Election**: Ensures only one active controller instance operates at a time.
+- **Prometheus Metrics**: Exposes metrics for monitoring via Prometheus.
 
-<h2>Prerequisites</h2>
-<ul>
-    <li>Kubernetes cluster and <code>kubectl</code> configured.</li>
-    <li>Go 1.19+ installed.</li>
-    <li>Prometheus (optional).</li>
-</ul>
+## Table of Contents
 
-<h2>Getting Started</h2>
+- [Introduction](#introduction)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Custom Resource Definition (CRD)](#custom-resource-definition-crd)
+- [Leader Election](#leader-election)
+- [Prometheus Metrics](#prometheus-metrics)
+- [Contributing](#contributing)
+- [License](#license)
 
-<h3>1. Clone the Repository</h3>
-<pre><code>git clone https://github.com/yourusername/go-k8s-controller.git
-cd go-k8s-controller</code></pre>
+## Introduction
 
-<h3>2. Install Dependencies</h3>
-<pre><code>go mod tidy</code></pre>
+PodConfigMapController automates the management of ConfigMaps based on Pod metadata. It listens to Pod events across all namespaces and ensures that a corresponding ConfigMap is created or deleted when a Pod is created or deleted. The controller can be customized using a CRD and supports leader election for high availability.
 
-<h3>3. Apply the CRD</h3>
-<pre><code>kubectl apply -f crd/myresource_crd.yaml</code></pre>
+## Prerequisites
 
-<h3>4. Run the Controller</h3>
-<pre><code>go run main.go</code></pre>
+- **Go**: Version 1.19 or higher.
+- **Kubernetes Cluster**: Version 1.28 or compatible.
+- **Kubectl**: Configured to communicate with your cluster.
+- **Docker**: For containerizing the controller (optional).
+- **Kubernetes Code Generator**: If you plan to modify or extend the CRD functionality.
 
-<h3>5. Deploy a Pod for Testing</h3>
-<pre><code>kubectl run test-pod --image=busybox --command -- sleep 3600</code></pre>
+## Installation
 
-<h3>6. Monitor Prometheus Metrics</h3>
-<p>Visit <code>http://localhost:8080/metrics</code> for metrics like:</p>
-<ul>
-    <li><code>pod_create_count</code>: Pods created</li>
-    <li><code>pod_delete_count</code>: Pods deleted</li>
-</ul>
+### Clone the Repository
 
-<h3>7. Use the Custom Resource</h3>
-<p>Create a <code>MyResource</code> to control behavior:</p>
-<pre><code>kubectl apply -f crd/myresource_example.yaml</code></pre>
-
-<h2>Leader Election</h2>
-<p>Leader election ensures that only one controller instance is active in multi-instance setups.</p>
-<pre><code>kubectl create deployment controller --image=&lt;your-controller-image&gt; --replicas=3</code></pre>
-
-<h2>Extending the Controller</h2>
-<p>The controller can be extended to handle other Kubernetes resources, add custom reconciliation logic, and support more advanced CRD behaviors.</p>
-
-<h2>License</h2>
-<p>Licensed under the MIT License.</p>
-
-</body>
-</html>
+```bash
+git clone https://github.com/yourusername/PodConfigMapController.git
+cd PodConfigMapController
