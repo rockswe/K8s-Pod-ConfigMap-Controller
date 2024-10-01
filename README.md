@@ -1,6 +1,6 @@
 # PodConfigMapController
 
-A custom Kubernetes controller written in Go that watches for Pod events and automatically creates or deletes ConfigMaps containing their metadata. The controller supports: a
+A custom Kubernetes controller written in Go that watches for Pod events and automatically creates or deletes ConfigMaps containing their metadata. The controller supports:
 
 - **Pod Events**: Handles create, update, and delete events for Pods.
 - **ConfigMap Management**: Creates and deletes ConfigMaps corresponding to Pods.
